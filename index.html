@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>UniZap Ghana LIVE</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>*{margin:0;padding:0;box-sizing:border-box;font-family:Arial}
+body{background:#f0f7ff}.header{background:#2563eb;color:#fff;padding:20px;text-align:center}
+.status{background:#22c55e;color:#fff;padding:10px;text-align:center;font-weight:bold;font-size:18px}
+.container{max-width:500px;margin:20px auto;background:#fff;padding:25px;border-radius:15px;box-shadow:0 4px 10px rgba(0,0,0,.1)}
+input{width:100%;padding:15px;margin:10px 0;border:2px solid #ddd;border-radius:10px;font-size:16px}
+button{width:100%;padding:16px;background:#2563eb;color:#fff;border:none;border-radius:10px;font-size:18px;font-weight:bold}
+.msg{margin-top:15px;padding:15px;border-radius:10px;text-align:center;font-weight:bold}
+.success{background:#dcfce7;color:#166534}.error{background:#fee2e2;color:#991b1b}</style>
+</head><body>
+<div class="header"><h1>UniZap Ghana GH</h1><p>PURE NO SIM - V50 FINAL LIVE</p></div>
+<div id="status" class="status">Connecting to Supabase...</div>
+<div class="container">
+<h3>Hostel: Unity Hall - GHC 2500</h3>
+<input id="phone" type="tel" placeholder="Enter phone: 0591234567" maxlength="10">
+<button id="bookBtn" onclick="bookNow()">Book & Pay Auto</button>
+<div id="msg"></div>
+<div style="margin-top:20px;padding:15px;background:#f8fafc;border-radius:10px"><h4>Recent Bookings:</h4><div id="bookings">Loading...</div></div>
+</div>
+<script>
+const SUPABASE_URL="https://tvjcsbwkntderdagmdqd.supabase.co";
+const SUPABASE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR2amNzYndrbnRkZXJkYWdtZHFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA2ODQwODIsImV4cCI6MjEwNjI2MDA4Mn0.TGx4gkB-uBaxuCEpgzmaV4KLRX3L86Yx-vz5gFvyPjY";
+const supabaseClient=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+async function init(){
+ try{
+  const {data,error}=await supabaseClient.from('bookings').select('*').limit(1);
+  if(error) throw error;
+  document.getElementById('status').innerHTML="Supabase: Connected LIVE";
+  document.getElementById('status').style.background="#22c55e";
+  loadBookings();
+ }catch(e){
+  document.getElementById('status').innerHTML="Error: "+e.message;
+  document.getElementById('status').style.background="#ef4444";
+ }
+}
+async function bookNow(){
+ const phone=document.getElementById('phone').value.trim();
+ const btn=document.getElementById('bookBtn');
+ const msgDiv=document.getElementById('msg');
+ if(phone.length<10){msgDiv.innerHTML='<div class="msg error">Enter valid 10 digit</div>';return;}
+ btn.disabled=true;btn.innerText="Booking...";
+ try{
+  const {error}=await supabaseClient.from('bookings').insert([{hostel_name:'Unity Hall',student_phone:phone,price:2500}]);
+  if(error) throw error;
+  msgDiv.innerHTML='<div class="msg success">Booked! Phone '+phone+' saved! GHC 2500</div>';
+  document.getElementById('phone').value='';
+  loadBookings();
+ }catch(e){msgDiv.innerHTML='<div class="msg error">'+e.message+'</div>';}
+ btn.disabled=false;btn.innerText="Book & Pay Auto";
+}
+async function loadBookings(){
+ try{
+  const {data}=await supabaseClient.from('bookings').select('*').order('created_at',{ascending:false}).limit(5);
+  if(data&&data.length>0){document.getElementById('bookings').innerHTML=data.map(b=>"<div style='padding:8px;border-bottom:1px solid #eee'>"+b.student_phone+" - GHC "+b.price+" - "+new Date(b.created_at).toLocaleTimeString()+"</div>").join('');}
+  else{document.getElementById('bookings').innerHTML="No bookings yet. Be first!";}
+ }catch(e){document.getElementById('bookings').innerHTML="Run SQL to create bookings table";}
+}
+init();
+</script></body></html>
