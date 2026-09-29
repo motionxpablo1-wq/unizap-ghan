@@ -1,62 +1,163 @@
 <!DOCTYPE html>
-<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>UniZap Ghana LIVE</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<style>*{margin:0;padding:0;box-sizing:border-box;font-family:Arial}
-body{background:#f0f7ff}.header{background:#2563eb;color:#fff;padding:20px;text-align:center}
-.status{background:#22c55e;color:#fff;padding:10px;text-align:center;font-weight:bold;font-size:18px}
-.container{max-width:500px;margin:20px auto;background:#fff;padding:25px;border-radius:15px;box-shadow:0 4px 10px rgba(0,0,0,.1)}
-input{width:100%;padding:15px;margin:10px 0;border:2px solid #ddd;border-radius:10px;font-size:16px}
-button{width:100%;padding:16px;background:#2563eb;color:#fff;border:none;border-radius:10px;font-size:18px;font-weight:bold}
-.msg{margin-top:15px;padding:15px;border-radius:10px;text-align:center;font-weight:bold}
-.success{background:#dcfce7;color:#166534}.error{background:#fee2e2;color:#991b1b}</style>
-</head><body>
-<div class="header"><h1>UniZap Ghana GH</h1><p>PURE NO SIM - V50 FINAL LIVE</p></div>
-<div id="status" class="status">Connecting to Supabase...</div>
-<div class="container">
-<h3>Hostel: Unity Hall - GHC 2500</h3>
-<input id="phone" type="tel" placeholder="Enter phone: 0591234567" maxlength="10">
-<button id="bookBtn" onclick="bookNow()">Book & Pay Auto</button>
-<div id="msg"></div>
-<div style="margin-top:20px;padding:15px;background:#f8fafc;border-radius:10px"><h4>Recent Bookings:</h4><div id="bookings">Loading...</div></div>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>UniZap GH - PURE NO SIM V39.1</title>
+<link rel="manifest" href="data:application/json,{}">
+<style>
+:root{--bg:#080d18;--card:#111a29;--card2:#0f172a;--input:#0a1222;--border:#134e4a;--text:#e2e8f0;--sub:#94a3b8;--teal:#2dd4bf;--green:#16a34a}
+[data-theme="light"]{--bg:#f8fafc;--card:#ffffff;--card2:#f1f5f9;--input:#ffffff;--border:#a7f3d0;--text:#0f172a;--sub:#64748b}
+*{margin:0;padding:0;box-sizing:border-box;font-family:Inter,system-ui;outline:none!important}
+body{background:var(--bg);color:var(--text);display:flex;justify-content:center;transition:0.3s}
+.app{width:100%;max-width:420px;min-height:100vh;background:var(--bg);padding:10px 10px 130px 10px;transition:0.3s}
+.top{display:flex;justify-content:space-between;align-items:center;padding:10px 2px}
+.logo{font-weight:900;font-size:22px;display:flex;align-items:center;gap:8px;color:var(--teal)}
+.tabs{display:flex;gap:6px;overflow:auto;padding:8px 0;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{padding:8px 14px;border-radius:20px;font-size:12px;font-weight:700;white-space:nowrap;background:var(--card2);color:var(--sub);border:1px solid var(--border);cursor:pointer}
+.tab.on{background:var(--text);color:var(--bg)}
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:12px;margin-bottom:12px;transition:0.3s}
+.h{font-weight:800;font-size:15px;margin-bottom:10px}
+.sub{font-size:11px;color:var(--sub);line-height:1.4}
+.input-group{background:var(--input);border:1px solid var(--border);border-radius:10px;padding:0;margin-bottom:8px}
+.input-group label{font-size:10px;color:var(--teal);padding:6px 10px 0 10px;display:block;font-weight:600}
+.input-group input,.input-group select{width:100%;background:transparent;border:0;color:var(--text);padding:6px 10px 10px 10px;font-size:12px}
+.btn{width:100%;padding:12px;border-radius:11px;border:0;font-weight:800;font-size:12px;cursor:pointer}
+.teal{background:var(--teal);color:#000}.green{background:var(--green);color:#fff}.white{background:var(--text);color:var(--bg)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.badge{font-size:8px;padding:3px 7px;border-radius:20px;background:var(--card2);color:var(--teal);border:1px solid var(--border);font-weight:800}
+.uni-scroll{display:flex;gap:6px;overflow:auto;padding:6px 0;scrollbar-width:none}
+.uni{padding:6px 10px;border-radius:20px;font-size:10px;font-weight:700;background:var(--card2);border:1px solid var(--border);color:var(--sub);white-space:nowrap;cursor:pointer}
+.uni.on{background:var(--teal);color:#000;border-color:var(--teal)}
+.page{display:none}.page.on{display:block}
+.bottom{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:420px;background:var(--card);border-top:1px solid var(--border);padding:8px 0 6px 0;z-index:99;transition:0.3s}
+.nav-row{display:flex;justify-content:space-around}
+.nav-item{text-align:center;font-size:9px;color:var(--sub);cursor:pointer;line-height:1.2}
+.nav-item.on{color:var(--teal)}
+.theme-toggle{display:flex;justify-content:center;margin-top:8px}
+.toggle{width:76px;height:32px;background:var(--card2);border:1px solid var(--border);border-radius:20px;position:relative;cursor:pointer;display:flex;align-items:center;padding:3px;transition:0.3s}
+.toggle-ball{width:26px;height:26px;background:var(--teal);border-radius:50%;position:absolute;left:3px;transition:0.3s;display:flex;align-items:center;justify-content:center;font-size:14px}
+[data-theme="light"].toggle-ball{left:47px}
+.track{padding:8px;background:var(--card2);border:1px dashed var(--border);border-radius:10px;margin-top:8px;font-size:11px}
+</style>
+</head>
+<body data-theme="dark">
+<div class="app">
+<div class="top"><div class="logo">⚡ UniZap</div><div style="color:var(--sub);font-size:12px">🔍 🔔 👤 • <span style="color:var(--teal);font-size:8px">Supabase: LIVE</span></div></div>
+
+<!-- UNIVERSITY TAP -->
+<div class="uni-scroll" id="uniScroll">
+<div class="uni on" onclick="setUni(this,'All')">All • 68+</div>
+<div class="uni" onclick="setUni(this,'UCC')">UCC</div>
+<div class="uni" onclick="setUni(this,'KNUST')">KNUST</div>
+<div class="uni" onclick="setUni(this,'UG')">UG</div>
+<div class="uni" onclick="setUni(this,'UPSA')">UPSA</div>
+<div class="uni" onclick="setUni(this,'UEW')">UEW</div>
+<div class="uni" onclick="setUni(this,'UDS')">UDS</div>
+<div class="uni" onclick="setUni(this,'UENR')">UENR</div>
+<div class="uni" onclick="setUni(this,'HTU')">HTU</div>
+<div class="uni" onclick="setUni(this,'TTU')">TTU</div>
 </div>
+
+<!-- TABS -->
+<div class="tabs">
+<div class="tab on" onclick="goPage('home',this)">Home</div>
+<div class="tab" onclick="goPage('hostels',this)">Hostels</div>
+<div class="tab" onclick="goPage('food',this)">Food</div>
+<div class="tab" onclick="goPage('data',this)">Data</div>
+<div class="tab" onclick="goPage('nss',this)">NSS</div>
+<div class="tab" onclick="goPage('cv',this)">CV</div>
+</div>
+
+<!-- HOME PAGE -->
+<div class="page on" id="home">
+<div class="card">
+<div style="display:flex;justify-content:space-between"><div style="font-size:10px;color:var(--teal);font-weight:700;letter-spacing:1px">DATA BUNDLE • 0 SIM • 90 DAYS</div><div style="font-size:9px;background:var(--card2);border:1px solid var(--border);padding:3px 8px;border-radius:20px">V39.1 • Auto</div></div>
+<div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px"><div><div style="font-weight:800">Recharge 5GB</div><div style="font-weight:900;font-size:18px;color:var(--teal);margin-top:2px">GHS 23.19</div><div style="font-size:9px;color:var(--sub)">Valid 90 Days • Best Value</div></div><button class="btn teal" style="width:auto;padding:8px 16px" onclick="goPage('data',null)">Recharge</button></div>
+<div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap">
+<span class="badge">1GB • 5.19</span><span class="badge" style="background:var(--teal);color:#000">5GB • 23.19 Popular</span><span class="badge">10GB • 45.19</span><span class="badge">20GB</span><span class="badge">50GB</span>
+</div>
+</div>
+<div class="card">
+<div style="font-weight:800;display:flex;align-items:center;gap:6px">🏢 List Your Hostel</div>
+<div class="sub" style="margin-top:4px">Add hostel to reach thousands across 68+ universities — AI auto verifies in 5 mins</div>
+<div style="margin-top:12px">
+<div class="input-group"><label>Hostel name</label><input id="hName" placeholder="e.g. Campus View Hostel"></div>
+<div class="input-group"><label>Location</label><input id="hLoc" placeholder="e.g. KNUST, Kumasi"></div>
+<button class="btn teal" onclick="submitHostel()">+ Submit Hostel</button>
+</div>
+</div>
+<div class="grid2">
+<div class="card" style="text-align:center"><div style="font-weight:900;font-size:18px;color:var(--teal)">142</div><div style="font-size:8px;color:var(--sub)">VENDORS AUTO</div></div>
+<div class="card" style="text-align:center"><div style="font-weight:900;font-size:18px">328</div><div style="font-size:8px;color:var(--sub)">CUSTOMERS AUTO</div></div>
+</div>
+</div>
+
+<!-- DATA PAGE -->
+<div class="page" id="data">
+<div class="card">
+<div class="h">📱 Data Bundles • 90 Days Valid • 0 SIM</div>
+<div class="sub">Corporate API • Queue + 4 Doctors + 5 Predictors • Instant activation</div>
+<div style="margin-top:12px" id="dataList"></div>
+<div class="input-group"><label>Phone (0XX)</label><input id="dPhone" placeholder="0XX XXX XXXX"></div>
+<div class="input-group"><label>Confirm Phone</label><input id="dPhone2" placeholder="Confirm same number"></div>
+<div class="input-group"><label>Selected Bundle</label><input id="dBundle" value="5GB - GHS 23.19" readonly></div>
+<button class="btn teal" onclick="buyData()">Pay with MoMo • Auto Delivery</button>
+<div class="track" id="dTrack">Status: Ready to pay</div>
+</div>
+</div>
+
+<!-- HOSTELS PAGE -->
+<div class="page" id="hostels">
+<div class="card">
+<div class="h">🏢 Hostels • Unity Hall - GHC 2500</div>
+<div class="input-group"><label>Enter phone 0591234567</label><input id="bPhone" placeholder="0591234567"></div>
+<button class="btn teal" onclick="bookHostel()">Book & Pay Auto</button>
+<div class="track" id="bTrack">Recent: <span id="bRecent"></span></div>
+</div>
+<div class="card"><div class="h">KNUST • Ayeduase</div><div class="sub">Campus View • GHC 3200 / year • AI Verified ✅</div></div>
+<div class="card"><div class="h">UCC • Amamoma</div><div class="sub">Scholar's Lodge • GHC 2500 / year • AI Verified ✅</div></div>
+</div>
+
+<!-- OTHER PAGES -->
+<div class="page" id="food"><div class="card"><div class="h">🍔 Food Vendors • Auto Onboarding</div><div class="sub">Vendors list themselves — no you work. SEO brings them.</div><div class="card2" style="margin-top:10px"><div style="font-weight:700">Jollof + Chicken - GHC 35</div><div class="sub">KNUST Campus • Delivers in 20 mins</div></div></div></div>
+<div class="page" id="nss"><div class="card"><div class="h">💼 NSS Jobs • Auto Scraper</div><div class="card2" style="margin-top:10px"><div style="font-weight:700">NSS Marketing Assistant - Accra</div><div class="sub">Apply by: 30 Sep 2026 • Auto found</div></div></div></div>
+<div class="page" id="cv"><div class="card"><div class="h">📄 CV Review • 24hr</div><div class="input-group"><label>Upload CV link</label><input placeholder="Paste Google Drive link"></div><button class="btn white">Submit for Review • Score 82/100</button></div></div>
+
+</div>
+
+<!-- BOTTOM WITH LIGHT/DARK TOGGLE -->
+<div class="bottom">
+<div class="nav-row">
+<div class="nav-item on" onclick="goPage('home',this,0)"><div>🏠</div>Home</div>
+<div class="nav-item" onclick="goPage('hostels',this,1)"><div>🏢</div>Hostels</div>
+<div class="nav-item" onclick="goPage('food',this,2)"><div>🍔</div>Food</div>
+<div class="nav-item" onclick="goPage('data',this,3)"><div>📱</div>Data</div>
+<div class="nav-item" onclick="goPage('cv',this,4)"><div>👤</div>Profile</div>
+</div>
+<div class="theme-toggle">
+<div class="toggle" onclick="toggleTheme()"><div class="toggle-ball" id="ball">🌙</div><div style="display:flex;justify-content:space-between;width:100%;padding:0 6px;font-size:14px"><span>☀️</span><span>🌙</span></div></div>
+</div>
+<div style="text-align:center;font-size:8px;color:var(--sub);margin-top:4px" id="themeLabel">🌙 Dark Mode — Tap toggle to switch to light</div>
+</div>
+
 <script>
-const SUPABASE_URL="https://tvjcsbwkntderdagmdqd.supabase.co";
-const SUPABASE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR2amNzYndrbnRkZXJkYWdtZHFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA2ODQwODIsImV4cCI6MjEwNjI2MDA4Mn0.TGx4gkB-uBaxuCEpgzmaV4KLRX3L86Yx-vz5gFvyPjY";
-const supabaseClient=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
-async function init(){
- try{
-  const {data,error}=await supabaseClient.from('bookings').select('*').limit(1);
-  if(error) throw error;
-  document.getElementById('status').innerHTML="Supabase: Connected LIVE";
-  document.getElementById('status').style.background="#22c55e";
-  loadBookings();
- }catch(e){
-  document.getElementById('status').innerHTML="Error: "+e.message;
-  document.getElementById('status').style.background="#ef4444";
- }
+const bundles=[{gb:"1GB",price:"5.19",tag:"Student"},{gb:"2GB",price:"9.19"},{gb:"3GB",price:"14.19"},{gb:"4GB",price:"18.19"},{gb:"5GB",price:"23.19",tag:"Most Popular"},{gb:"6GB",price:"27.19"},{gb:"7GB",price:"32.19"},{gb:"8GB",price:"36.19",tag:"Best Value"},{gb:"10GB",price:"45.19"}];
+function renderBundles(){let h="";bundles.forEach(b=>{h+=`<div style="display:flex;justify-content:space-between;align-items:center;padding:8px;border:1px solid var(--border);border-radius:10px;margin-bottom:6px;background:var(--card2);cursor:pointer" onclick="document.getElementById('dBundle').value='${b.gb} - GHS ${b.price}'"><div><b>${b.gb}</b> - GHS ${b.price} <span style="font-size:8px;color:var(--teal)">90 days</span> ${b.tag?`<span class="badge">${b.tag}</span>`:""}</div><div style="font-size:10px">▶️</div></div>`});document.getElementById('dataList').innerHTML=h}
+renderBundles();
+function goPage(id,el,idx){
+ document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
+ document.getElementById(id).classList.add('on');
+ document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+ if(el&&el.classList.contains('tab')) el.classList.add('on');
+ if(idx!==undefined){document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('on'));document.querySelectorAll('.nav-item')[idx].classList.add('on')}
 }
-async function bookNow(){
- const phone=document.getElementById('phone').value.trim();
- const btn=document.getElementById('bookBtn');
- const msgDiv=document.getElementById('msg');
- if(phone.length<10){msgDiv.innerHTML='<div class="msg error">Enter valid 10 digit</div>';return;}
- btn.disabled=true;btn.innerText="Booking...";
- try{
-  const {error}=await supabaseClient.from('bookings').insert([{hostel_name:'Unity Hall',student_phone:phone,price:2500}]);
-  if(error) throw error;
-  msgDiv.innerHTML='<div class="msg success">Booked! Phone '+phone+' saved! GHC 2500</div>';
-  document.getElementById('phone').value='';
-  loadBookings();
- }catch(e){msgDiv.innerHTML='<div class="msg error">'+e.message+'</div>';}
- btn.disabled=false;btn.innerText="Book & Pay Auto";
-}
-async function loadBookings(){
- try{
-  const {data}=await supabaseClient.from('bookings').select('*').order('created_at',{ascending:false}).limit(5);
-  if(data&&data.length>0){document.getElementById('bookings').innerHTML=data.map(b=>"<div style='padding:8px;border-bottom:1px solid #eee'>"+b.student_phone+" - GHC "+b.price+" - "+new Date(b.created_at).toLocaleTimeString()+"</div>").join('');}
-  else{document.getElementById('bookings').innerHTML="No bookings yet. Be first!";}
- }catch(e){document.getElementById('bookings').innerHTML="Run SQL to create bookings table";}
-}
-init();
-</script></body></html>
+function setUni(el,name){document.querySelectorAll('.uni').forEach(u=>u.classList.remove('on'));el.classList.add('on');}
+function toggleTheme(){const b=document.body;const cur=b.getAttribute('data-theme');const nxt=cur==='dark'?'light':'dark';b.setAttribute('data-theme',nxt);document.getElementById('ball').innerText=nxt==='dark'?'🌙':'☀️';document.getElementById('themeLabel').innerText=nxt==='dark'?'🌙 Dark Mode — Tap toggle to switch to light':'☀️ Light Mode — Tap toggle to switch to dark';localStorage.setItem('theme',nxt)}
+const saved=localStorage.getItem('theme')||'dark';document.body.setAttribute('data-theme',saved);document.getElementById('ball').innerText=saved==='dark'?'🌙':'☀️';document.getElementById('themeLabel').innerText=saved==='dark'?'🌙 Dark Mode — Tap toggle to switch to light':'☀️ Light Mode — Tap toggle to switch to dark';
+function bookHostel(){const p=document.getElementById('bPhone').value;if(!p){alert('Enter phone');return;}document.getElementById('bTrack').innerHTML=`Booked! Phone ${p} saved! GHC 2500`;document.getElementById('bRecent').innerText=`${p} - GHC 2500 - ${new Date().toLocaleTimeString()}`;localStorage.setItem('lastBook',p)}
+function buyData(){const a=document.getElementById('dPhone').value,b=document.getElementById('dPhone2').value;if(a!==b||!a.startsWith('0')){alert('Phone must match and start with 0XX');return;}document.getElementById('dTrack').innerText=`Status: Paid • Sending to ${a} • 5GB GHS 23.19 • 90 Days`;setTimeout(()=>{document.getElementById('dTrack').innerText=`Status: Delivered ✅ to ${a} • Ref: UZ${Date.now()}`},2000)}
+function submitHostel(){alert('Hostel submitted! AI will verify video in 5 mins - Auto listed');}
+</script>
+</body>
+</html>
